@@ -1,37 +1,53 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 func main() {
-	// server
 	ln, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer ln.Close()
 
+	fmt.Println("Server started")
+
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
 			log.Println(err)
+			continue
 		}
-		go handleConnection(conn)
+
+		go handleClient(conn)
 	}
 }
 
-func handleConnection(conn net.Conn) {
+func handleClient(conn net.Conn) {
 	defer conn.Close()
-	// Read from the client
-	buf := make([]byte, 1024)
-	n, err := conn.Read(buf)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println(string(buf[:n]))
 
-	fmt.Fprint(conn, "Echo - "+string(buf[:n]))
+	scanner := bufio.NewScanner(conn)
+
+	for scanner.Scan() {
+		message := scanner.Text()
+
+		fmt.Println("Received:", message)
+
+		if strings.EqualFold(strings.TrimSpace(message), "ping") {
+			fmt.Fprintln(conn, "pong")
+		} else {
+			fmt.Fprintln(conn, "Server received:", message)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Println("Error reading from client:", err)
+	}
+
+	fmt.Println("Client disconnected")
 }
