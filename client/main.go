@@ -21,6 +21,25 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	reader := bufio.NewReader(conn)
 
+	fmt.Print("Enter your name: ")
+	if !scanner.Scan() {
+		if err := scanner.Err(); err != nil {
+			log.Println("Error reading name:", err)
+		}
+		return
+	}
+
+	fmt.Fprintln(conn, scanner.Text())
+	welcome, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error receiving server response:", err)
+		return
+	}
+	if strings.HasPrefix(welcome, "ERR:") {
+		fmt.Print(welcome)
+		return
+	}
+	fmt.Print(welcome)
 	fmt.Println("Start typing:")
 
 	for scanner.Scan() {
