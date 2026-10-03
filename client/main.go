@@ -56,18 +56,26 @@ func main() {
 		fmt.Println(response)
 		return
 	}
-
 	fmt.Println(response)
 	fmt.Println("Start typing:")
 
-	// Continuously receive messages from server
-	go func() {
-		for serverScanner.Scan() {
-			fmt.Println(serverScanner.Text())
-		}
-	}()
+	go receiver(serverScanner)
+	go sender(scanner, conn)
+}
 
-	// Continuously send messages to server
+// Continuously receive messages from server
+
+func receiver(serverScanner *bufio.Scanner) {
+	for serverScanner.Scan() {
+		fmt.Println(serverScanner.Text())
+	}
+	if err := serverScanner.Err(); err != nil {
+		log.Println("Error reading input:", err)
+	}
+}
+
+// Continuously send messages to server
+func sender(scanner *bufio.Scanner, conn net.Conn) {
 	for scanner.Scan() {
 		message := scanner.Text()
 
@@ -79,9 +87,6 @@ func main() {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Println("Error reading input:", err)
-	}
-	if err := serverScanner.Err(); err != nil {
 		log.Println("Error reading input:", err)
 	}
 }
