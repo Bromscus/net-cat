@@ -10,38 +10,64 @@ import (
 )
 
 func main() {
-	// 1. Connect to the server's IP and Port (Triggers 3-Way Handshake)
-	conn, err := net.Dial("tcp", "localhost:8080")
+	conn, err := net.Dial("tcp", "localhost:8989")
 	if err != nil {
 		fmt.Println("Error connecting to server:", err)
-		os.Exit(1)
+		return
 	}
-	defer conn.Close() // Ensure the connection closes at the end
+	defer conn.Close()
 
 	scanner := bufio.NewScanner(os.Stdin)
-	reader := bufio.NewReader(conn)
+	serverScanner := bufio.NewScanner(conn)
+	fmt.Println(
+		"       _nnnn_\n" +
+			"      dGGGGMMb\n" +
+			"     @p~qp~~qMb\n" +
+			"     M|@||@) M|\n" +
+			"     @,----.JM|\n" +
+			"    JS^\\__/  qKL\n" +
+			"   dZP        qKRb\n" +
+			"  dZP          qKKb\n" +
+			" fZP            SMMb\n" +
+			" HZM            MMMM\n" +
+			" FqM            MMMM\n" +
+			"__| \".        |\\dS\"qML\n" +
+			"|    `.       | `' \\Zq\n" +
+			"_)      \\.___.,|     .'\n" +
+			"\\____   )MMMMMP|   .'\n" +
+			"     `-'       `--'",
+	)
+	fmt.Print("[ENTER YOUR NAME]: ")
 
-	fmt.Print("Enter your name: ")
 	if !scanner.Scan() {
-		if err := scanner.Err(); err != nil {
-			log.Println("Error reading name:", err)
-		}
 		return
 	}
 
 	fmt.Fprintln(conn, scanner.Text())
-	welcome, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Println("Error receiving server response:", err)
+
+	// Read welcome/error response
+	if !serverScanner.Scan() {
 		return
 	}
-	if strings.HasPrefix(welcome, "ERR:") {
-		fmt.Print(welcome)
+
+	response := serverScanner.Text()
+
+	if strings.HasPrefix(response, "ERROR:") {
+		fmt.Println(response)
 		return
 	}
-	fmt.Print(welcome)
+
+	fmt.Println(response)
 	fmt.Println("Start typing:")
 
+	// Continuously receive messages from server
+	go func() {
+		for serverScanner.Scan() {
+			fmt.Println(serverScanner.Text())
+		}
+	}()
+
+	// Continuously send messages to server
 	for scanner.Scan() {
 		message := scanner.Text()
 
@@ -50,16 +76,12 @@ func main() {
 		}
 
 		fmt.Fprintln(conn, message)
-
-		reply, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		fmt.Printf("Received reply: %s", reply)
 	}
+
 	if err := scanner.Err(); err != nil {
-		log.Println("Error reading from client:", err)
+		log.Println("Error reading input:", err)
+	}
+	if err := serverScanner.Err(); err != nil {
+		log.Println("Error reading input:", err)
 	}
 }
