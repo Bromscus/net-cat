@@ -1,26 +1,33 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strings"
-	"time"
+	"log"
+	"net"
+
+	functions "netcat/server"
 )
 
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("Start typing: ")
-	for scanner.Scan() {
-		if scanner.Text() == "ping" {
-			time.Sleep(500 * (time.Millisecond))
-			fmt.Println("pong")
-		}
-		if strings.ToLower(scanner.Text()) == "exit" {
-			os.Exit(0)
-		}
+	port := functions.Validation()
+	if port == "" {
+		return
 	}
-	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+	ln, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer ln.Close()
+
+	fmt.Println("Listening on the port :" + port)
+
+	for {
+		conn, err := ln.Accept()
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		go functions.HandleClient(conn)
 	}
 }
