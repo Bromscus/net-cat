@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -9,6 +8,12 @@ import (
 )
 
 func main() {
+	logFile, err := functions.Logger()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logFile.Close()
+
 	port := functions.Validation()
 	if port == "" {
 		return
@@ -19,7 +24,7 @@ func main() {
 	}
 	defer ln.Close()
 
-	fmt.Println("Listening on the port :" + port)
+	log.Println("Listening on the port :" + port)
 
 	for {
 		conn, err := ln.Accept()

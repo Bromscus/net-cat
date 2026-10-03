@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net"
 )
 
@@ -12,7 +13,7 @@ func broadcast(message string, sender net.Conn) {
 	// Save message in history
 	chat.history = append(chat.history, message)
 
-	fmt.Println(message)
+	log.Println(message)
 
 	// Send to every client except sender
 	for _, client := range chat.clients {

@@ -3,6 +3,7 @@ package server
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net"
 	"strings"
 )
@@ -64,9 +65,9 @@ func HandleClient(conn net.Conn) {
 
 	defer removeClient(conn)
 
-	fmt.Printf("%s has connected\n", name)
+	log.Printf("%s has connected", name)
 
 	readMessages(conn, scanner, name)
 
-	fmt.Printf("%s disconnected\n", name)
+	log.Printf("%s disconnected", name)
 }

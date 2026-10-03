@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net"
 )
 
@@ -26,7 +27,7 @@ func removeClient(conn net.Conn) {
 				fmt.Fprint(client.conn, prompt(client.name))
 			}
 
-			fmt.Println(message)
+			log.Println(message)
 			return
 		}
 	}
