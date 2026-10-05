@@ -14,7 +14,7 @@ func handler() {
 	if len(os.Args) == 2 {
 		port = os.Args[1]
 	} else if len(os.Args) > 2 {
-		fmt.Println("[USAGE]: ./TCPChat $port")
+		fmt.Println("[USAGE]: nc $ip $port")
 		return
 	}
 
