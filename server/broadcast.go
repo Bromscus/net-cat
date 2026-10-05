@@ -21,7 +21,7 @@ func broadcast(message string, sender net.Conn) {
 			// Move away from their current prompt
 			fmt.Fprintln(client.conn)
 
-			// Show incoming message
+			// Show coming message
 			fmt.Fprintln(client.conn, message)
 
 			// Give them their prompt again
