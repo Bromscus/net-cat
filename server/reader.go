@@ -27,12 +27,7 @@ func readMessages(conn net.Conn, scanner *bufio.Scanner, name string) {
 
 		timestamp := time.Now().Format("2006-01-02 15:04:05")
 
-		formattedMessage := fmt.Sprintf(
-			"[%s][%s]:%s",
-			timestamp,
-			name,
-			message,
-		)
+		formattedMessage := fmt.Sprintf("[%s][%s]:%s", timestamp, name, message)
 
 		broadcast(formattedMessage, conn)
 	}

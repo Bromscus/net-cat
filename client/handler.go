@@ -51,7 +51,6 @@ func handler() {
 		return
 	}
 	fmt.Println(response)
-
-	go receiver(serverScanner)
-	sender(scanner, conn)
+	go sender(scanner, conn)
+	receiver(serverScanner)
 }
