@@ -9,7 +9,7 @@ The server manages connected clients, preserves chat history for new users, and 
 ## Authors
 
 - ahmsalem
--asami
+- asami
 
 ## Usage: how to run
 

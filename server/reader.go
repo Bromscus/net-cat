@@ -19,7 +19,6 @@ func readMessages(conn net.Conn, scanner *bufio.Scanner, name string) {
 		}
 
 		message := strings.TrimSpace(scanner.Text())
-
 		// Do not broadcast empty messages
 		if message == "" {
 			continue
